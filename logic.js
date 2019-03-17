@@ -1,20 +1,19 @@
-function add_tile(board) {
+function addTile(board) {
     let i, j;
     do {
         i = Math.floor(Math.random() * board.length);
         j = Math.floor(Math.random() * board.length);
     } while (board[i][j] !== 0);
-    board[i][j] = Math.random() < 0.9 ? 2 : 4;
+    let n = Math.random() < 0.9 ? 2 : 4;
+    board[i][j] = n;
+    return [i, j, n]
 }
 
 function getNewBoard() {
-    let board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
-    add_tile(board);
-    add_tile(board);
-    return board;
+    return [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 }
 
-function swap_zeros_to_the_left(row) {
+function swapZerosToLeft(row) {
     let j = row.length - 1;
     let k = row.length - 1;
     let moved = false;
@@ -38,7 +37,7 @@ function right(board) {
     let score = 0;
     let moved = false;
     for (let i = 0; i < board.length; i++) {
-        moved = swap_zeros_to_the_left(board[i]) || moved;
+        moved = swapZerosToLeft(board[i]) || moved;
         for (let j = board.length - 1; j > 0; j--) { // j = 3, 2, 1
             if (board[i][j] !== 0 && board[i][j] === board[i][j - 1]) {
                 board[i][j] *= 2;
@@ -47,7 +46,7 @@ function right(board) {
                 moved = true;
             }
         }
-        moved = swap_zeros_to_the_left(board[i]) || moved;
+        moved = swapZerosToLeft(board[i]) || moved;
     }
     return [moved, score];
 }

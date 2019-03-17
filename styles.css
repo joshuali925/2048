@@ -5,13 +5,14 @@
 
 #reset_button {
     background-color: #ccc0b3;
-    border-radius: 10px;
-    border: none;
     color: black;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 16px;
-    height: 35px;
+    font-weight: bold;
     margin: 3px;
+    height: 35px;
     width: 125px;
 }
 
@@ -23,14 +24,14 @@
 #header p {
     font-size: 20px;
     margin: 10px;
-    display:inline;
+    display: inline;
 }
 
 .board {
-    background-color: #bbada0;
-    border-radius: 6px;
     display: inline-grid;
     grid-template-columns: repeat(4, auto);
+    background-color: #bbada0;
+    border-radius: 6px;
     padding: 5px;
     margin-top: 20px;
 }
@@ -38,15 +39,28 @@
 .grid {
     background-color: #ccc0b3;
     border-radius: 6px;
-    font-size: 30px;
-    margin: 8px;
+    margin: 6px;
     text-align: center;
     height: 100px;
     line-height: 100px;
     width: 100px;
+    position: relative;
 }
 
 .number {
     font-size: 55px;
     font-weight: bolder;
+    border-radius: 6px;
+    position: relative;
+    display: block;
+    z-index: 99;
+}
+
+@keyframes appear {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

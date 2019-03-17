@@ -73,7 +73,7 @@ function updateBoard(board, oldBoard, direction, addTwo) {
         if (addTwo) {
             let [i, j] = addTile(board);
             if (isGameOver(board))
-                $('#reset_button').text('Game over');
+                $('#button').text('Game over');
             updateGrid(board, i, j, true);
         }
         mergedPos.forEach(function(pos) {
@@ -95,35 +95,38 @@ function updateGrid(board, i, j, appearEffect = false) {
 }
 
 
-function startGame() {
-    let score = 0;
+function init() {
+    score = 0;
     $('#score').text(score);
+    $('#button').text('Restart');
     board = getNewBoard();
     addTile(board);
     addTile(board);
     updateBoard(board);
-    $(document).keydown(function (e) {
-        let [moved, score_gained] = [false, 0], oldBoard;
-        if (e.which in directions) {
-            oldBoard = getNewBoard();
-            for (let i = 0; i < board.length; i++)
-                for (let j = 0; j < board[0].length; j++)
-                    oldBoard[i][j] = board[i][j];
-            [moved, score_gained] = directions[e.which](board);
-        }
-        if (moved) {
-            score += score_gained;
-            $('#score').text(score);
-            updateBoard(board, oldBoard, e.which, true);
-        }
-    })
 }
 
 let directions = {37: left, 40: down, 38: up, 39: right};
 let duration = '0.2s';
+let score;
 let board;
 
-startGame();
+init();
+$(document).keydown(function (e) {
+    let [moved, score_gained] = [false, 0], oldBoard;
+    if (e.which in directions) {
+        oldBoard = getNewBoard();
+        for (let i = 0; i < board.length; i++)
+            for (let j = 0; j < board[0].length; j++)
+                oldBoard[i][j] = board[i][j];
+        [moved, score_gained] = directions[e.which](board);
+    }
+    if (moved) {
+        score += score_gained;
+        console.log(score, score_gained)
+        $('#score').text(score);
+        updateBoard(board, oldBoard, e.which, true);
+    }
+});
 
 function pop(i, j) {
     let pos = '-' + i + '-' + j;
@@ -148,7 +151,7 @@ function slide(i, j, direction, n) {
 
 function setColor(pos, num) {
     let [color_bg, color_fg] = getColor(num);
-    $('#number' + pos).css('background-color', color_bg).css('color', color_fg);
+    $('#number' + pos).css({'background-color': color_bg, 'color': color_fg});
 }
 
 function getColor(num) {

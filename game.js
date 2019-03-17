@@ -122,7 +122,6 @@ $(document).keydown(function (e) {
     }
     if (moved) {
         score += score_gained;
-        console.log(score, score_gained)
         $('#score').text(score);
         updateBoard(board, oldBoard, e.which, true);
     }
@@ -134,8 +133,7 @@ function pop(i, j) {
 }
 
 function slide(i, j, direction, n) {
-    if (n <= 0)
-        return;
+    if (n <= 0) return;
     n = n * 112 + 'px';
     let pos = '-' + i + '-' + j;
     let fast = 50;
@@ -150,12 +148,13 @@ function slide(i, j, direction, n) {
 }
 
 function setColor(pos, num) {
-    let [color_bg, color_fg] = getColor(num);
-    $('#number' + pos).css({'background-color': color_bg, 'color': color_fg});
+    let [color_bg, color_fg, font_size] = getColor(num);
+    $('#number' + pos).css({'background-color': color_bg, 'color': color_fg, 'font-size': font_size});
 }
 
 function getColor(num) {
-    let color_bg = '', color_fg = num > 4 ? '#f9f6f2' : '#776e65';
+    let font_size = 60 - Math.floor(Math.log10(num)) * 6;
+    let color_bg = '#000000', color_fg = num > 4 ? '#f9f6f2' : '#776e65';
     switch (num) {
         case 0:
             color_bg = "#cdc0b4";
@@ -185,20 +184,14 @@ function getColor(num) {
             color_bg = "#edcc61";
             break;
         case 512:
-            color_bg = "#9c0";
+            color_bg = "#edc850";
             break;
         case 1024:
-            color_bg = "#33b5e5";
+            color_bg = "#edc53f";
             break;
         case 2048:
-            color_bg = "#09c";
-            break;
-        case 4096:
-            color_bg = "#a6c";
-            break;
-        case 8192:
-            color_bg = "#93c";
+            color_bg = "#edc22e";
             break;
     }
-    return [color_bg, color_fg];
+    return [color_bg, color_fg, font_size + 'px'];
 }

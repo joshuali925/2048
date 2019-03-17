@@ -1,13 +1,88 @@
-function updateBoard(board, oldBoard, direction) {
-    $('.number').remove();
-    for (let i = 0; i < board.length; i++) {
-        for (let j = 0; j < board[0].length; j++) {
-            updateGrid(board, i, j);
+function updateBoard(board, oldBoard, direction, addTwo) {
+    let mergedPos = [];
+    if (direction === 37) {
+        let n = board.length;
+        for (let i = 0; i < n; i++) {  // fix a row
+            for (let j = 0; j < n; j++) {  // find a non zero number
+                if (board[i][j] === 0) continue;
+                let count = 0;
+                for (let k = j; k < n; k++) {  // find where the number came from
+                    if (oldBoard[i][k] === 0) continue;
+                    slide(i, k, 'left', k - j);
+                    let oldNum = oldBoard[i][k];
+                    oldBoard[i][k] = 0;
+                    if (oldNum === board[i][j] || ++count === 2) break;  // break if did not merge or slided twice
+                    mergedPos.push('-' + i + '-' + j);  // merged, add to list for animation
+                }
+            }
+        }
+    } else if (direction === 39) {
+        let n = board.length;
+        for (let i = 0; i < n; i++) {
+            for (let j = n - 1; j >= 0; j--) {
+                if (board[i][j] === 0) continue;
+                let count = 0;
+                for (let k = j; k >= 0; k--) {
+                    if (oldBoard[i][k] === 0) continue;
+                    slide(i, k, 'right', j - k);
+                    let oldNum = oldBoard[i][k];
+                    oldBoard[i][k] = 0;
+                    if (oldNum === board[i][j] || ++count === 2) break;
+                    mergedPos.push('-' + i + '-' + j);
+                }
+            }
+        }
+    } else if (direction === 40) {
+        let n = board.length;
+        for (let i = 0; i < n; i++) {
+            for (let j = n - 1; j >= 0; j--) {
+                if (board[j][i] === 0) continue;
+                let count = 0;
+                for (let k = j; k >= 0; k--) {
+                    if (oldBoard[k][i] === 0) continue;
+                    slide(k, i, 'down', j - k);
+                    let oldNum = oldBoard[k][i];
+                    oldBoard[k][i] = 0;
+                    if (oldNum === board[j][i] || ++count === 2) break;
+                    mergedPos.push('-' + j + '-' + i);
+                }
+            }
+        }
+    } else if (direction === 38) {
+        let n = board.length;
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                if (board[j][i] === 0) continue;
+                let count = 0;
+                for (let k = j; k < n; k++) {
+                    if (oldBoard[k][i] === 0) continue;
+                    slide(k, i, 'up', k - j);
+                    let oldNum = oldBoard[k][i];
+                    oldBoard[k][i] = 0;
+                    if (oldNum === board[j][i] || ++count === 2) break;
+                    mergedPos.push('-' + j + '-' + i);
+                }
+            }
         }
     }
+    $(":animated").promise().done(function () {
+        $('.number').remove();
+        for (let i = 0; i < board.length; i++)
+            for (let j = 0; j < board[0].length; j++)
+                updateGrid(board, i, j);
+        if (addTwo) {
+            let [i, j] = addTile(board);
+            if (isGameOver(board))
+                $('#reset_button').text('Game over');
+            updateGrid(board, i, j, true);
+        }
+        mergedPos.forEach(function(pos) {
+            $('#number' + pos).css('animation', 'pop ' + duration);
+        });
+    });
 }
 
-function updateGrid(board, i, j, animated=undefined) {
+function updateGrid(board, i, j, appearEffect = false) {
     let pos = '-' + i + '-' + j;
     if (board[i][j] > 0) {
         let num = board[i][j];
@@ -15,17 +90,18 @@ function updateGrid(board, i, j, animated=undefined) {
         $('#grid' + pos).append(html);
     }
     setColor(pos, board[i][j]);
-    if (animated === 'appear')
+    if (appearEffect)
         $('#number' + pos).css('animation', 'appear ' + duration);
 }
 
 
 function startGame() {
     let score = 0;
+    $('#score').text(score);
     board = getNewBoard();
     addTile(board);
     addTile(board);
-    updateBoard(board, score);
+    updateBoard(board);
     $(document).keydown(function (e) {
         let [moved, score_gained] = [false, 0], oldBoard;
         if (e.which in directions) {
@@ -38,11 +114,7 @@ function startGame() {
         if (moved) {
             score += score_gained;
             $('#score').text(score);
-            updateBoard(board, oldBoard, e.which);
-            let [i, j] = addTile(board);
-            updateGrid(board, i, j, 'appear');
-            if (isGameOver(board))
-                alert('Game over.');
+            updateBoard(board, oldBoard, e.which, true);
         }
     })
 }
@@ -53,24 +125,25 @@ let board;
 
 startGame();
 
-function slide(pos, direction, n) {
+function pop(i, j) {
+    let pos = '-' + i + '-' + j;
+    $('#number' + pos).css('animation', 'pop ' + duration);
+}
+
+function slide(i, j, direction, n) {
+    if (n <= 0)
+        return;
     n = n * 112 + 'px';
-    if (direction === 37)
-        $('#number' + pos).animate({right: n}, duration, function () {
-            $(this).remove();
-        });
-    else if (direction === 40)
-        $('#number' + pos).animate({top: n}, duration, function () {
-            $(this).remove();
-        });
-    else if (direction === 38)
-        $('#number' + pos).animate({bottom: n}, duration, function () {
-            $(this).remove();
-        });
-    else if (direction === 39)
-        $('#number' + pos).animate({left: n}, duration, function () {
-            $(this).remove();
-        });
+    let pos = '-' + i + '-' + j;
+    let fast = 50;
+    if (direction === 'left')
+        $('#number' + pos).animate({right: n}, fast);
+    else if (direction === 'down')
+        $('#number' + pos).animate({top: n}, fast);
+    else if (direction === 'up')
+        $('#number' + pos).animate({bottom: n}, fast);
+    else if (direction === 'right')
+        $('#number' + pos).animate({left: n}, fast);
 }
 
 function setColor(pos, num) {

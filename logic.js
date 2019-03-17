@@ -4,9 +4,8 @@ function addTile(board) {
         i = Math.floor(Math.random() * board.length);
         j = Math.floor(Math.random() * board.length);
     } while (board[i][j] !== 0);
-    let n = Math.random() < 0.9 ? 2 : 4;
-    board[i][j] = n;
-    return [i, j, n]
+    board[i][j] = Math.random() < 0.9 ? 2 : 4;
+    return [i, j]
 }
 
 function getNewBoard() {

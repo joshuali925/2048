@@ -2,32 +2,23 @@ function updateBoard(board, oldBoard, direction) {
     $('.number').remove();
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[0].length; j++) {
-            let pos = '-' + i + '-' + j;
-            if (board[i][j] > 0) {
-                let num = board[i][j] === 0 ? '' : board[i][j];
-                let html = '<span class="number" id="number' + pos + '">' + num + '</span>';
-                $('#grid' + pos).append(html);
-            }
-            setColor(pos, board[i][j]);
+            updateGrid(board, i, j);
         }
     }
-
-
 }
 
-function addNewTileAnimation(board) {
-    let [i, j, num] = addTile(board);
+function updateGrid(board, i, j, animated=undefined) {
     let pos = '-' + i + '-' + j;
-    let html = '<span class="number" id="number' + pos + '">' + num + '</span>';
-    $('#grid' + pos).append(html);
+    if (board[i][j] > 0) {
+        let num = board[i][j];
+        let html = '<span class="number" id="number' + pos + '">' + num + '</span>';
+        $('#grid' + pos).append(html);
+    }
     setColor(pos, board[i][j]);
-    $('#number' + pos).css('animation', 'appear ' + duration);
+    if (animated === 'appear')
+        $('#number' + pos).css('animation', 'appear ' + duration);
 }
 
-function setColor(pos, num) {
-    let [color_bg, color_fg] = getColor(num);
-    $('#number' + pos).css('background-color', color_bg).css('color', color_fg);
-}
 
 function startGame() {
     let score = 0;
@@ -38,17 +29,18 @@ function startGame() {
     $(document).keydown(function (e) {
         let [moved, score_gained] = [false, 0], oldBoard;
         if (e.which in directions) {
-            [moved, score_gained] = directions[e.which](board);
             oldBoard = getNewBoard();
             for (let i = 0; i < board.length; i++)
                 for (let j = 0; j < board[0].length; j++)
                     oldBoard[i][j] = board[i][j];
+            [moved, score_gained] = directions[e.which](board);
         }
         if (moved) {
             score += score_gained;
             $('#score').text(score);
             updateBoard(board, oldBoard, e.which);
-            addNewTileAnimation(board);
+            let [i, j] = addTile(board);
+            updateGrid(board, i, j, 'appear');
             if (isGameOver(board))
                 alert('Game over.');
         }
@@ -79,6 +71,11 @@ function slide(pos, direction, n) {
         $('#number' + pos).animate({left: n}, duration, function () {
             $(this).remove();
         });
+}
+
+function setColor(pos, num) {
+    let [color_bg, color_fg] = getColor(num);
+    $('#number' + pos).css('background-color', color_bg).css('color', color_fg);
 }
 
 function getColor(num) {

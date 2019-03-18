@@ -122,7 +122,7 @@ function init() {
 }
 
 let directions = {37: left, 40: down, 38: up, 39: right};
-let duration = '0.2s';
+let duration = 100;
 let score;
 let board;
 
@@ -140,15 +140,15 @@ function slide(i, j, direction, n) {
     if (n <= 0) return;
     n = n * 112 + 'px';
     let pos = '-' + i + '-' + j;
-    let fast = 50;
+    let delay = 70;
     if (direction === 'left')
-        $('#number' + pos).animate({right: n}, fast);
+        $('#number' + pos).animate({right: n}, delay);
     else if (direction === 'down')
-        $('#number' + pos).animate({top: n}, fast);
+        $('#number' + pos).animate({top: n}, delay);
     else if (direction === 'up')
-        $('#number' + pos).animate({bottom: n}, fast);
+        $('#number' + pos).animate({bottom: n}, delay);
     else if (direction === 'right')
-        $('#number' + pos).animate({left: n}, fast);
+        $('#number' + pos).animate({left: n}, delay);
 }
 
 function set_color(pos, num) {

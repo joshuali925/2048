@@ -62,7 +62,7 @@ function right(board) {
     return [moved, score];
 }
 
-function rotate_clockwise(board) {
+function flip_horizontal(board) {
     let n = board.length;
     for (let i = 0; i < (n / 2 >> 0); i++) {
         for (let j = 0; j < n; j++) {
@@ -71,6 +71,21 @@ function rotate_clockwise(board) {
             board[n - 1 - i][j] = temp;
         }
     }
+}
+
+function flip_vertical(board) {
+    let n = board.length;
+    for (let i = 0; i < (n / 2 >> 0); i++) {
+        for (let j = 0; j < n; j++) {
+            let temp = board[j][i];
+            board[j][i] = board[j][n - 1 - i];
+            board[j][n - 1 - i] = temp;
+        }
+    }
+}
+
+function transpose(board) {
+    let n = board.length;
     for (let i = 0; i < n; i++) {
         for (let j = i + 1; j < n; j++) {
             let temp = board[i][j];
@@ -81,29 +96,27 @@ function rotate_clockwise(board) {
 }
 
 function up(board) {
-    rotate_clockwise(board);
+    flip_horizontal(board);
+    transpose(board);
     let [moved, score] = right(board);
-    rotate_clockwise(board);
-    rotate_clockwise(board);
-    rotate_clockwise(board);
+    transpose(board);
+    flip_horizontal(board);
     return [moved, score];
 }
 
 function left(board) {
-    rotate_clockwise(board);
-    rotate_clockwise(board);
+    flip_vertical(board);
     let [moved, score] = right(board);
-    rotate_clockwise(board);
-    rotate_clockwise(board);
+    flip_vertical(board);
     return [moved, score];
 }
 
 function down(board) {
-    rotate_clockwise(board);
-    rotate_clockwise(board);
-    rotate_clockwise(board);
+    flip_vertical(board);
+    transpose(board);
     let [moved, score] = right(board);
-    rotate_clockwise(board);
+    transpose(board);
+    flip_vertical(board);
     return [moved, score];
 }
 

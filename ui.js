@@ -1,4 +1,4 @@
-function updateBoard(board, oldBoard, direction, addTwo) {
+function animate_move(board, oldBoard, direction, addTwo) {
     let mergedPos = [];
     if (direction === 37) {
         let n = board.length;
@@ -66,43 +66,59 @@ function updateBoard(board, oldBoard, direction, addTwo) {
         }
     }
     $(":animated").promise().done(function () {
-        $('.number').remove();
-        for (let i = 0; i < board.length; i++)
-            for (let j = 0; j < board[0].length; j++)
-                updateGrid(board, i, j);
+        update_board(board);
         if (addTwo) {
-            let [i, j] = addTile(board);
-            if (isGameOver(board))
+            let [i, j] = add_tile(board);
+            if (is_game_over(board))
                 $('#button').text('Game over');
-            updateGrid(board, i, j, true);
+            update_grid(board, i, j, true);
         }
-        mergedPos.forEach(function(pos) {
+        mergedPos.forEach(function (pos) {
             $('#number' + pos).css('animation', 'pop ' + duration);
         });
     });
 }
 
-function updateGrid(board, i, j, appearEffect = false) {
+function update_board(board) {
+    $('.number').remove();
+    for (let i = 0; i < board.length; i++)
+        for (let j = 0; j < board[0].length; j++)
+            update_grid(board, i, j);
+}
+
+function update_grid(board, i, j, appearEffect = false) {
     let pos = '-' + i + '-' + j;
     if (board[i][j] > 0) {
         let num = board[i][j];
         let html = '<span class="number" id="number' + pos + '">' + num + '</span>';
         $('#grid' + pos).append(html);
     }
-    setColor(pos, board[i][j]);
+    set_color(pos, board[i][j]);
     if (appearEffect)
         $('#number' + pos).css('animation', 'appear ' + duration);
 }
 
+function move_and_display(board, move) {
+    let oldBoard, [moved, score_gained] = [false, 0];
+    if (move in directions) {
+        oldBoard = copy_board(board);
+        [moved, score_gained] = directions[move](board);
+    }
+    if (moved) {
+        score += score_gained;
+        $('#score').text(score);
+        animate_move(board, oldBoard, move, true);
+    }
+}
 
 function init() {
     score = 0;
     $('#score').text(score);
     $('#button').text('Restart');
-    board = getNewBoard();
-    addTile(board);
-    addTile(board);
-    updateBoard(board);
+    board = get_new_board();
+    add_tile(board);
+    add_tile(board);
+    animate_move(board);
 }
 
 let directions = {37: left, 40: down, 38: up, 39: right};
@@ -112,19 +128,7 @@ let board;
 
 init();
 $(document).keydown(function (e) {
-    let [moved, score_gained] = [false, 0], oldBoard;
-    if (e.which in directions) {
-        oldBoard = getNewBoard();
-        for (let i = 0; i < board.length; i++)
-            for (let j = 0; j < board[0].length; j++)
-                oldBoard[i][j] = board[i][j];
-        [moved, score_gained] = directions[e.which](board);
-    }
-    if (moved) {
-        score += score_gained;
-        $('#score').text(score);
-        updateBoard(board, oldBoard, e.which, true);
-    }
+    move_and_display(board, e.which);
 });
 
 function pop(i, j) {
@@ -147,12 +151,12 @@ function slide(i, j, direction, n) {
         $('#number' + pos).animate({left: n}, fast);
 }
 
-function setColor(pos, num) {
-    let [color_bg, color_fg, font_size] = getColor(num);
+function set_color(pos, num) {
+    let [color_bg, color_fg, font_size] = get_color(num);
     $('#number' + pos).css({'background-color': color_bg, 'color': color_fg, 'font-size': font_size});
 }
 
-function getColor(num) {
+function get_color(num) {
     let font_size = 60 - Math.floor(Math.log10(num)) * 6;
     let color_bg = '#000000', color_fg = num > 4 ? '#f9f6f2' : '#776e65';
     switch (num) {

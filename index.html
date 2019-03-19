@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <title>2048</title>
@@ -11,9 +11,9 @@
 <div id="main">
     <div id="header">
         <p>Score：<span id="score"></span></p>
-        <button id="button" onclick="init()"></button>
-        <button id="button" onclick="run_random_algorithm()">Run</button>
-        <button id="button" onclick="stop()">Stop</button>
+        <button class="button" onclick="init()">Restart</button>
+        <button class="button" onclick="run_simulation_algorithm()">Run</button>
+        <button class="button" onclick="stop()">Stop</button>
     </div>
     <div class="board">
         <div class="grid" id="grid-0-0"></div>
@@ -34,8 +34,8 @@
         <div class="grid" id="grid-3-3"></div>
     </div>
 </div>
-<script src="logic.js"></script>
-<script src="ai.js"></script>
-<script src="ui.js"></script>
+<script src="js/logic.js"></script>
+<script src="js/ai_simulation.js"></script>
+<script src="js/ui.js"></script>
 </body>
 </html>

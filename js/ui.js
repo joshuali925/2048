@@ -70,7 +70,7 @@ function animate_move(board, oldBoard, direction, addTwo) {
         if (addTwo) {
             let [i, j] = add_tile(board);
             if (is_game_over(board))
-                $('#button').text('Game over');
+                $('#score').text(score + ', game over!');
             update_grid(board, i, j, true);
         }
         mergedPos.forEach(function (pos) {
@@ -81,6 +81,7 @@ function animate_move(board, oldBoard, direction, addTwo) {
 
 function update_board(board) {
     $('.number').remove();
+    $('#score').text(score);
     for (let i = 0; i < board.length; i++)
         for (let j = 0; j < board[0].length; j++)
             update_grid(board, i, j);
@@ -114,7 +115,6 @@ function move_and_display(board, move) {
 function init() {
     score = 0;
     $('#score').text(score);
-    $('#button').text('Restart');
     board = get_new_board();
     add_tile(board);
     add_tile(board);

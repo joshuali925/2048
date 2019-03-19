@@ -2,10 +2,12 @@ function add_tile(board) {
     let empty = [];
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[0].length; j++) {
-            if (board[i][j] === 0)
+            if (board[i][j] === 0) {
                 empty.push([i, j]);
+            }
         }
     }
+    // if (empty.length === 0) return [-1, -1];
     let [i, j] = empty[Math.floor(Math.random() * empty.length)];
     board[i][j] = Math.random() < 0.9 ? 2 : 4;
     return [i, j]

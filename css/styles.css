@@ -3,7 +3,7 @@
     text-align: center;
 }
 
-#button {
+.button {
     background-color: #ccc0b3;
     color: black;
     border: none;
@@ -16,7 +16,7 @@
     width: 125px;
 }
 
-#button:hover {
+.button:hover {
     background-color: #8f7a66;
     color: white;
 }

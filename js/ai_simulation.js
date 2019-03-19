@@ -16,7 +16,7 @@ function get_move_list(board) {
 
 let id = 0;
 
-function run_simulation_algorithm(trials = 500, depth = 8) {
+function run_simulation_algorithm(trials = 100, depth = 8) {
     id = window.setInterval(function () {
         if (!is_game_over(board)) {
             let move = simulation_get_move(board, trials, depth);
@@ -24,14 +24,14 @@ function run_simulation_algorithm(trials = 500, depth = 8) {
         } else {
             window.clearInterval(id);
         }
-    }, 200);
+    }, 100);  // interval >= 100ms
 }
 
 function stop() {
     window.clearInterval(id);
 }
 
-function measure(trials = 100, depth = 999999999) {
+function measure(trials = 100, depth = 99999999) {
     let t0 = performance.now();
     let steps = 0;
     while (!is_game_over(board)) {

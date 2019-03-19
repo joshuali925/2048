@@ -127,9 +127,56 @@ let score;
 let board;
 
 init();
+// arrow keys
 $(document).keydown(function (e) {
     move_and_display(board, e.which);
 });
+
+// prevent scrolling
+$("body").css({'position': 'fixed', 'left': '0', 'right': '0', 'overflow-y': 'scroll'});
+
+// swipes
+document.addEventListener('touchstart', handleTouchStart, false);
+document.addEventListener('touchmove', handleTouchMove, false);
+
+let xDown = null;
+let yDown = null;
+
+function getTouches(evt) {
+    return evt.touches ||             // browser API
+        evt.originalEvent.touches; // jQuery
+}
+
+function handleTouchStart(evt) {
+    const firstTouch = getTouches(evt)[0];
+    xDown = firstTouch.clientX;
+    yDown = firstTouch.clientY;
+};
+
+function handleTouchMove(evt) {
+    if (!xDown || !yDown) return;
+
+    let xUp = evt.touches[0].clientX;
+    let yUp = evt.touches[0].clientY;
+    let xDiff = xDown - xUp;
+    let yDiff = yDown - yUp;
+
+    if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {
+        if ( xDiff > 0 ) {
+            move_and_display(board, 37);  // left
+        } else {
+            move_and_display(board, 39);  // right
+        }
+    } else {
+        if ( yDiff > 0 ) {
+            move_and_display(board, 38);  // up
+        } else {
+            move_and_display(board, 40);  // down
+        }
+    }
+    xDown = null;
+    yDown = null;
+};
 
 function pop(i, j) {
     let pos = '-' + i + '-' + j;

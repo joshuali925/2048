@@ -7,7 +7,7 @@ function add_tile(board) {
             }
         }
     }
-    // if (empty.length === 0) return [-1, -1];
+    if (empty.length === 0) return [-1, -1];
     let [i, j] = empty[Math.floor(Math.random() * empty.length)];
     board[i][j] = Math.random() < 0.9 ? 2 : 4;
     return [i, j]

@@ -31,13 +31,11 @@ function stop() {
     window.clearInterval(id);
 }
 
-function measure(trials = 500, depth = 8) {
+function measure(trials = 100, depth = 999999999) {
     let t0 = performance.now();
     let steps = 0;
     while (!is_game_over(board)) {
-        // let move = get_random_move(board);
         let move = simulation_get_move(board, trials, depth);
-        // let move = monte_carlo_get_move(board, trials, depth);
         let [moved, score_gained] = directions[move](board);
         score += score_gained;
         steps++;
@@ -62,28 +60,22 @@ function random_move_until(board, depth) {
 function simulation_get_move(board, trials, depth) {
     let moves = get_move_list(board);
     if (moves.length === 1) return moves[0];
-    let scores = {37: 0, 38: 0, 39: 0, 40: 0};
-    trials = trials / moves.length >> 0;
+    let best_score = 0, best_move = 0;
 
     for (let i = 0; i < moves.length; i++) {
-        let new_board = copy_board(board);
-        let first_move = moves[i];
-        let [moved, init_score] = directions[first_move](new_board);
+        let score = 0;
         for (let j = 0; j < trials; j++) {
-            let start_board = copy_board(new_board);
-            let end_score = random_move_until(start_board, depth);
-            scores[first_move] += (init_score + end_score);
+            let new_board = copy_board(board);
+            let [moved, init_score] = directions[moves[i]](new_board);
+            add_tile(new_board);
+            score += init_score + random_move_until(new_board, depth);
+        }
+        if (score >= best_score) {
+            best_score = score;
+            best_move = moves[i];
         }
     }
-
-    let optimum = {gain: 0, move: 0};
-    for (let i = 37; i <= 40; i++) {
-        if (scores[i] > optimum.gain) {
-            optimum.gain = scores[i];
-            optimum.move = i;
-        }
-    }
-    return optimum.move;
+    return best_move;
 }
 
 function monte_carlo_get_move(board, trials, depth) {
@@ -96,6 +88,7 @@ function monte_carlo_get_move(board, trials, depth) {
         let new_board = copy_board(board);
         let first_move = get_random_move(new_board);
         let [moved, init_score] = directions[first_move](new_board);
+        add_tile(new_board);
         let end_score = random_move_until(new_board, depth);
         if (is_game_over(new_board))
             stats[first_move][1]++;

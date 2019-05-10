@@ -16,7 +16,7 @@ function get_move_list(board) {
 
 let id = 0;
 
-function run_simulation_algorithm(trials = 100, depth = 8) {
+function run_simulation_algorithm(trials = 150, depth = 15) {
     id = window.setInterval(function () {
         if (!is_game_over(board)) {
             let move = simulation_get_move(board, trials, depth);
@@ -77,7 +77,7 @@ function simulation_get_move(board, trials, depth) {
     }
     return best_move;
 }
-
+/*
 function monte_carlo_get_move(board, trials, depth) {
     let moves = get_move_list(board);
     if (moves.length === 1) return moves[0];
@@ -107,3 +107,4 @@ function monte_carlo_get_move(board, trials, depth) {
     }
     return optimum.move;
 }
+*/

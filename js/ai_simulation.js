@@ -17,18 +17,20 @@ function get_move_list(board) {
 let id = 0;
 
 function run_simulation_algorithm(trials = 150, depth = 15) {
-    id = window.setInterval(function () {
-        if (!is_game_over(board)) {
-            let move = simulation_get_move(board, trials, depth);
-            move_and_display(board, move);
-        } else {
-            window.clearInterval(id);
-        }
-    }, 100);  // interval >= 100ms
+    if (id === 0)
+        id = window.setInterval(function () {
+            if (!is_game_over(board)) {
+                let move = simulation_get_move(board, trials, depth);
+                move_and_display(board, move);
+            } else {
+                window.clearInterval(id);
+            }
+        }, 150);  // interval >= 100ms
 }
 
 function stop() {
     window.clearInterval(id);
+    id = 0;
 }
 
 function measure(trials = 100, depth = 99999999) {
@@ -77,34 +79,3 @@ function simulation_get_move(board, trials, depth) {
     }
     return best_move;
 }
-/*
-function monte_carlo_get_move(board, trials, depth) {
-    let moves = get_move_list(board);
-    if (moves.length === 1) return moves[0];
-    // [score, lost_count, total_count]
-    let stats = {37: [0, 0, 0], 38: [0, 0, 0], 39: [0, 0, 0], 40: [0, 0, 0]};
-
-    for (let i = 0; i < trials; i++) {
-        let new_board = copy_board(board);
-        let first_move = get_random_move(new_board);
-        let [moved, init_score] = directions[first_move](new_board);
-        add_tile(new_board);
-        let end_score = random_move_until(new_board, depth);
-        if (is_game_over(new_board))
-            stats[first_move][1]++;
-        stats[first_move][0] += init_score + end_score;
-        stats[first_move][2]++;
-    }
-
-    let optimum = {gain: 0, move: 0};
-    for (let i = 37; i <= 40; i++) {
-        let weight = 1 - stats[i][1] / stats[i][2];
-        weight += Math.sqrt(2) * Math.sqrt(Math.log(trials) / stats[i][2]);
-        if (weight > optimum.gain) {
-            optimum.gain = weight;
-            optimum.move = i;
-        }
-    }
-    return optimum.move;
-}
-*/
